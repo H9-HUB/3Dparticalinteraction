@@ -5,8 +5,11 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "prebuild": "node scripts/fetch-mp-assets.mjs",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "fetch:mp": "node scripts/fetch-mp-assets.mjs",
+    "add:model": "node scripts/add-model.mjs"
   },
   "dependencies": {
     "@mediapipe/control_utils": "^0.6.1675466023",

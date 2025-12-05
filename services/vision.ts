@@ -5,14 +5,16 @@ let handLandmarker: HandLandmarker | null = null;
 export const initializeHandDetection = async (): Promise<HandLandmarker> => {
   if (handLandmarker) return handLandmarker;
 
-  const vision = await FilesetResolver.forVisionTasks(
-    // Use the latest WASM version to ensure compatibility
-    "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@latest/wasm"
-  );
+  // 使用同源路径以避免 CDN/跨域限制
+  const base = (typeof window !== 'undefined' ? (window as any).BASE_URL : '/') || (import.meta as any)?.env?.BASE_URL || '/';
+  const wasmUrl = `${base}mediapipe/wasm`;
+
+  const vision = await FilesetResolver.forVisionTasks(wasmUrl);
 
   handLandmarker = await HandLandmarker.createFromOptions(vision, {
     baseOptions: {
-      modelAssetPath: `https://storage.googleapis.com/mediapipe-models/hand_landmarker/hand_landmarker/float16/1/hand_landmarker.task`,
+      // 模型改为同源路径，构建时脚本会将文件放到该位置
+      modelAssetPath: `${base}mediapipe/models/hand_landmarker.task`,
       delegate: "GPU"
     },
     runningMode: "VIDEO",
